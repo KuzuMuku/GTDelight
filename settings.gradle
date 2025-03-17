@@ -1,0 +1,14 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = "Lss233's.Mirror();"
+            url = 'https://lss233.littleservice.cn/repositories/minecraft/'
+        }
+        maven { url "https://maven.minecraftforge.net/" }
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
+}
