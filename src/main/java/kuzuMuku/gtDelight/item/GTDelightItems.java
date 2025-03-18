@@ -1,5 +1,6 @@
 package kuzuMuku.gtDelight.item;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -45,10 +46,12 @@ public class GTDelightItems {
 
         //Done register
         ITEMS.register(context);
-        CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
+        CREATIVE_MODE_TABS.register("gt_delight_items", () -> CreativeModeTab.builder()
                 .withTabsBefore(CreativeModeTabs.COMBAT)
                 .icon(() -> ItemList.get(0).getDefaultInstance())
-                .displayItems((parameters, output) -> ItemList.forEach(output::accept)).build());
+                .displayItems((parameters, output) -> ItemList.forEach(output::accept))
+                .title(Component.translatable("gtdelight.tab.items"))
+                .build());
     }
     public static void register(String name,int nutrition, float sat) {
         register(name, nutrition, sat, false, null, 0);
