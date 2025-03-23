@@ -3,6 +3,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
 version = mod_version
@@ -117,6 +118,9 @@ repositories {
             includeGroup "mezz.jei"
         }
     }
+    maven {
+        url = "https://maven.tterrag.com/"
+    }
     maven { url = 'https://maven.gtceu.com'
         content {
             includeGroup 'com.gregtechceu.gtceu'
@@ -160,6 +164,11 @@ dependencies {
     annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.2"))
     implementation fg.deobf("io.github.llamalad7:mixinextras-forge:0.3.2")
+
+    implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
+
+    //
+    implementation fg.deobf("curse.maven:farmers-delight-398521:${farmersdelight_version}")
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
