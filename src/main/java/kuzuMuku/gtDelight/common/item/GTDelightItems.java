@@ -1,4 +1,4 @@
-package kuzuMuku.gtDelight.item;
+package kuzuMuku.gtDelight.common.item;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
@@ -25,24 +25,12 @@ import static kuzuMuku.gtDelight.GTDelight.MODID;
 public class GTDelightItems {
     public static final List<Item> ItemList = new ArrayList<>();
 
-
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     public static void initForge(IEventBus context){
-
-
-
-
-
 
         register("soup", 2, 0.5F);
         register("soup1", 2, 0.5F, true);
         register("soup2", 2, 0.5F, true, new MobEffectInstance(MobEffects.BLINDNESS, 30, 2,false ,true), 30);
-
-
-
-
-
-
 
         //Done register
         ITEMS.register(context);

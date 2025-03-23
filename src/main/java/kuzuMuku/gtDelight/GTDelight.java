@@ -1,9 +1,14 @@
 package kuzuMuku.gtDelight;
 
+import com.gregtechceu.gtceu.api.data.DimensionMarker;
+import com.gregtechceu.gtceu.api.machine.MachineDefinition;
+import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.mojang.logging.LogUtils;
-import kuzuMuku.gtDelight.item.GTDelightItems;
+import kuzuMuku.gtDelight.event.EventHandler;
+import kuzuMuku.gtDelight.common.item.GTDelightItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
@@ -16,6 +21,7 @@ import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -25,12 +31,12 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
-
+import kuzuMuku.gtDelight.common.CommonProxy;
+import kuzuMuku.gtDelight.cilent.ClientProxy;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(GTDelight.MODID)
-public class GTDelight
-{
+public class GTDelight {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "gt_delight";
     // Directly reference a slf4j logger
@@ -44,8 +50,7 @@ public class GTDelight
     public static final RegistryObject<Block> EXAMPLE_BLOCK = BLOCKS.register("example_block", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
     // Creates a new BlockItem with the id "examplemod:example_block", combining the namespace and path
 
-    public GTDelight(FMLJavaModLoadingContext context)
-    {
+    public GTDelight(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
 
         // Register the commonSetup method for modloading
@@ -66,10 +71,14 @@ public class GTDelight
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+        modEventBus.addGenericListener(MachineDefinition.class, EventHandler::registerMachines);
+        modEventBus.addGenericListener(GTRecipeType.class, EventHandler::registerRecipeTypes);
+        modEventBus.addGenericListener(DimensionMarker.class, EventHandler::registerDimensionMarkers);
+        DistExecutor.unsafeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event)
-    {
+    private void commonSetup(final FMLCommonSetupEvent event) {
         // Some common setup code
         LOGGER.info("HELLO FROM COMMON SETUP");
 
@@ -81,29 +90,29 @@ public class GTDelight
     }
 
     // Add the example block item to the building blocks tab
-    private void addCreative(BuildCreativeModeTabContentsEvent event)
-    {
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS)return;
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) return;
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event)
-    {
+    public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents
-    {
+    public static class ClientModEvents {
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event)
-        {
+        public static void onClientSetup(FMLClientSetupEvent event) {
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
+    }
+
+    public static ResourceLocation id(String name) {
+        return ResourceLocation.parse(MODID + ":" + name);
     }
 }
